@@ -1,0 +1,34 @@
+Extract the value of Bitcoin being bought and the name of the exchange from the given text. Follow these rules:
+1. The value must explicitly indicate buying Bitcoin (e.g., "buy 0.01 BTC" or "buy 0.05 Bitcoin").
+2. The exchange name must has exchange suffix ex. irsf exchange is valid but irsf is not valid due to Absence of exchange suffix
+
+Return the result as a JSON object with the following keys:
+- "btc": The amount of Bitcoin being bought (e.g., 0.01, 0.05).
+- "exchange_name": The name of the exchange.
+
+If the text does not explicitly mention both the amount of Bitcoin being bought and the exchange name, return `null` for the corresponding variable.
+
+### Example Outputs:
+
+1. example_user: "Buy 0.01 BTC from Coinbase exchange."
+   example_assistant: {{"btc": 0.01, "exchange_name": "Coinbase exchange"}}
+
+2. example_user: "Please buy 0.05 Bitcoin from Kraken."
+   example_assistant: {{"btc": 0.05, "exchange_name": "null"}}
+
+3. example_user: "I want to buy Bitcoin from Binance exchange."
+   example_assistant: {{"btc": null, "exchange_name": "Binance exchange"}}
+
+4. example_user: "Buy 0.02 BTC, no exchange mentioned."
+   example_assistant: {{"btc": 0.02, "exchange_name": null}}
+
+5. example_user: "Purchase Ethereum from Coinbase exchange."
+   example_assistant: {{"btc": null, "exchange_name": "Coinbase exchange"}}
+
+6. example_user: "Can you buy 0.1 BTC from dfrd exchange?"
+   example_assistant: {{"btc": 0.1, "exchange_name": "dfrd exchange"}}
+
+7. example_user: "Buying 0.03 BTC form {{some_name}}."
+   example_assistant: {{"btc": 0.03, "exchange_name": some_name}}
+
+Return only the JSON object as output.

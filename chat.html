@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chat-container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            height: 90vh;
+            /* Set height or max-height for scrollable container */
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            box-sizing: border-box;
+            background-color: #fafafa;
+            max-height: calc(100vh - 200px);
+            /* Adjust this value for better responsiveness */
+        }
+
+        .message {
+            margin-bottom: 12px;
+            padding: 12px 15px;
+            border-radius: 18px;
+            max-width: 70%;
+            line-height: 1.5;
+            word-wrap: break-word;
+            font-size: 16px;
+        }
+
+        .client {
+            background-color: #cce5ff;
+            color: #00376b;
+            align-self: flex-start;
+        }
+
+        .server {
+            background-color: #f2f2f2;
+            color: #333;
+            align-self: flex-start;
+        }
+
+        #input-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-top: 1px solid #e0e0e0;
+            background-color: #ffffff;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        #message-input:focus {
+            border-color: #b2dffc;
+        }
+
+        #send-button {
+            margin-left: 10px;
+            padding: 12px 20px;
+            border: none;
+            background-color: #0095f6;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-button:hover {
+            background-color: #0073cc;
+        }
+
+        #send-button:disabled {
+            background-color: #b2dffc;
+            cursor: not-allowed;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #fafafa;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <div id="input-container">
+            <input type="text" id="message-input" placeholder="Type your message here..." />
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const websocket = new WebSocket('/ws');
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        let isReceiving = false;
+        let streamingBox = null;
+
+        websocket.onopen = () => {
+            console.log('WebSocket connection established');
+        };
+
+        websocket.onmessage = (event) => {
+            const serverMessage = event.data;
+
+            // If the server sends "[END OF RESPONSE]", finalize the response
+            if (serverMessage === "[END OF RESPONSE]") {
+                isReceiving = false;
+                sendButton.disabled = false;
+                messageInput.disabled = false;
+                streamingBox = null;
+                return;
+            }
+
+            // If it's the first response chunk, remove the "Awaiting response..." placeholder
+            if (streamingBox) {
+                if (streamingBox.textContent === "Awaiting response...") {
+                    streamingBox.textContent = ""; // Clear the placeholder text
+                }
+                streamingBox.textContent += serverMessage;
+                messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+            }
+        };
+
+        websocket.onerror = (event) => {
+            console.error('WebSocket error:', event);
+        };
+
+        websocket.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (!message || isReceiving) return;
+
+            // Display client message
+            const clientMessageDiv = document.createElement('div');
+            clientMessageDiv.classList.add('message', 'client');
+            clientMessageDiv.textContent = message;
+            messagesDiv.appendChild(clientMessageDiv);
+
+            // Create a streaming box for the server's response
+            streamingBox = document.createElement('div');
+            streamingBox.classList.add('message', 'server');
+            streamingBox.textContent = "Awaiting response..."; // Placeholder for streaming
+            messagesDiv.appendChild(streamingBox);
+
+            // Send message to the server
+            websocket.send(message);
+
+            // Disable sending until the response is complete
+            isReceiving = true;
+            sendButton.disabled = true;
+            messageInput.disabled = true;
+
+            messageInput.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+        });
+
+        // Allow pressing Enter to send a message
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+    </script>
+</body>
+
+</html>

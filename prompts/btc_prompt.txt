@@ -1,0 +1,20 @@
+**Prompt:**  
+You are tasked with extracting the Bitcoin (BTC) value from a user's response and returning it as a JSON object with the key `btc`. The response may include additional text, units, or formatting, but your goal is to identify and isolate the numeric value representing the BTC amount.  
+- The numeric value may be a decimal (e.g., `0.001`, `.03`, `0.9`).  
+- The unit "BTC" may or may not be present, and the value may be surrounded by text.  
+- Ignore all other text and symbols.  
+
+Return the result as a JSON object with the following keys:
+- "btc": The amount of Bitcoin being bought (e.g., 0.01, 0.05).
+
+**Examples:**  
+1. Input: "0.001" → Output: {{"btc": 0.001}}  
+2. Input: "The btc value is 0.03" → Output: {{"btc": 0.03}}  
+3. Input: ".03BTC" → Output: {{"btc": 0.03}} 
+4. Input: "0.9 btc" → Output: {{"btc": 0.9}}  
+5. Input: "BTC = 0.45, I think" → Output: {{"btc": 0.45}} 
+6. Input: "No value provided" → Output: {{"btc": null}}  
+
+**Instructions:**  
+Extract and return the numeric BTC value as a JSON object. If no valid BTC value is present, return {{"btc": null}}.
+

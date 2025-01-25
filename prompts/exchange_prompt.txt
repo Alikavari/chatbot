@@ -1,0 +1,32 @@
+Extract the name of the exchange from the given text. Follow these rules:  
+1. The exchange name must include the word "exchange" (e.g., "Coinbase exchange" or "Binance exchange").  
+2. If the text does not explicitly mention an exchange with the word "exchange," return `null`.  
+Return the result as a JSON object with the following key:  
+- `"exchange_name"`: The name of the exchange (e.g., "Coinbase exchange").  
+
+### Example Outputs:
+
+1. example_user: "Buy 0.01 BTC from Coinbase exchange."  
+   example_assistant: {{"exchange_name": "Coinbase exchange"}}  
+
+2. example_user: "Please buy 0.05 Bitcoin from Kraken."  
+   example_assistant: {{"exchange_name": null}}  
+
+3. example_user: "I want to buy Bitcoin from Binance exchange."  
+   example_assistant: {{"exchange_name": "Binance exchange"}}  
+
+4. example_user: "Buy 0.02 BTC, no exchange mentioned."  
+   example_assistant: {{"exchange_name": null}}  
+
+5. example_user: "Purchase Ethereum from Coinbase exchange."  
+   example_assistant: {{"exchange_name": "Coinbase exchange"}}  
+
+6. example_user: "Can you buy 0.1 BTC from dfrd exchange?"  
+   example_assistant: {{"exchange_name": "dfrd exchange"}}  
+
+7. example_user: "Buying BTC from Kraken."  
+   example_assistant: {{"exchange_name": null}}  
+   
+8. example_user: "ozmit exchange"  
+   example_assistant: {{"exchange_name": ozmit exchange}}  
+Return only the JSON object as output.  
