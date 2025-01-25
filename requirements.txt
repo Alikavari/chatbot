@@ -18,15 +18,11 @@ httpcore==1.0.7
 httptools==0.6.4
 httpx==0.28.1
 idna==3.10
-ipykernel==6.29.5
-ipython==8.31.0
 jedi==0.19.2
 Jinja2==3.1.5
 jiter==0.8.2
 jsonpatch==1.33
 jsonpointer==3.0.0
-jupyter_client==8.6.3
-jupyter_core==5.7.2
 langchain-core==0.3.31
 langchain-openai==0.3.1
 langgraph==0.2.67
