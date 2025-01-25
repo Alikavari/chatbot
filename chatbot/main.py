@@ -27,7 +27,7 @@ app = FastAPI(lifespan=lifespan)
 @app.get("/")
 async def get_chat_page():
     # Return the chat.html file as an HTTP response
-    html_file_path = os.path.join(os.path.dirname(__file__), "chat.html")
+    html_file_path = os.path.join("chat.html")
     with open(html_file_path, "r", encoding="utf-8") as file:
         html_content = file.read()
     return HTMLResponse(content=html_content, media_type="text/html")
